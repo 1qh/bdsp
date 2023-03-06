@@ -1333,7 +1333,8 @@
 
 ```
 df = spark.read.json("logs.json")df.
-where("age > 21")
+where("age
+21")
 select("name.first").show()
 ```
 
@@ -1426,1346 +1427,426 @@ cachedMsgs.filter(\_.contains("bar")).count
 
 ### Operations
 
-- Common Transformation & Actions
-- Persistence (Caching)
-  53
-  53
-  RDD Operations
 - 2 types of operations
-- Transformations: operations that return a new
-  RDDs e.g., map(), filter()
-- Actions: operations that return a result to driver
-  program or write it to storage such as count(),
-  first()
+- Transformations
+  - return a new RDDs
+    - map()
+    - filter()
+- Actions
+  - return a result to
+    - driver program
+    - write it to storage
+      - count(), first()
 - Treated differently by Spark
-- Transformation: lazy evaluation
-- Action: execution at any time
-  54
-  54
-  27
-  05/12/2022
-  Transformation
-- Example 1. Use filter()
-- Python
-  inputRDD = sc.textFile("log.txt")
-  errorsRDD = inputRDD.filter(lambda x: "error" in x)
-- Scala
-  val inputRDD = sc.textFile("log.txt")
-  val errorsRDD = inputRDD.filter(line =>
-  line.contains("error"))
-- Java
-  JavaRDD<String> inputRDD = sc.textFile("log.txt");
-  JavaRDD<String> errorsRDD = inputRDD.filter(
-  new func<String, Boolean>() {
-  public Boolean call(String x) {
-  return x.contains("error"); }}
-  });
-  55
-  55
-  Transformation
-- filter()
-- does not change existing inputRDD
-- returns a pointer to an entirely new RDD
-- inputRDD still can be reused
-- union()
-  errorsRDD = inputRDD.filter(lambda x: "error" in x)
-  warningsRDD=inputRDD.filter(lambda x: "warning" in x)
-  badLinesRDD = errorsRDD.union(warningsRDD)
-- transformations can operate on any no.
-  input RDDs
-  56
-  56
-  28
-  05/12/2022
-  Transformation
-- Spark keeps track dependencies between
-  RDDs, called lineage graph
-- Allow recovering lost data
-  57
-  57
-  Actions
-- Example. count no. errors
-- Python
-  print "Input had " + badLinesRDD.count() + " concerning lines"
-  print "Here are 10 examples:"
-  for line in badLinesRDD.take(10):
-  print line
-- Scala
-  println("Input had " + badLinesRDD.count() + " concerning
-  lines")
-  println("Here are 10 examples:")
-  badLinesRDD.take(10).foreach(println)
-- Java
-  sys.out.println("Input had " + badLinesRDD.count() + "
-  concerning lines")
-  sys.out.println("Here are 10 examples:")
-  for (String line: badLinesRDD.take(10)) {
-  sys.out.println(line);
-  58
-  }
-  58
-  29
-  05/12/2022
-- RDD Basics
-- Creating RDDs
-  Resilient
-  Distributed
-  Dataset -
-  RDD
-- RDD Operations
-- Common Transformation & Actions
-- Persistence (Caching)
-  59
-  59
-  RDD Basics
-  Transformations
-  map
-  flatMap
-  filter
-  sample
-  union
-  groupByKey
-  reduceByKey
-  join
-  cache
-  …
-  Actions
-  reduce
-  collect
-  count
-  save
-  lookupKey
-  …
-  Email: info@pti.edu.vn | Website: pti.edu.vn
-  60
-  30
-  05/12/2022
-  Transformations
-  61
-  Transformations
-  62
-  31
-  05/12/2022
-  Actions
-  63
-  Actions
-  64
-  32
-  05/12/2022
-  Resilient
-  Distributed
-  Dataset -
-  RDD
-- RDD Basics
-- Creating RDDs
-- RDD Operations
-- Common Transformation & Actions
-- Persistence (Caching)
-  65
-  65
-  Persistence levels
-  66
-  66
-  33
-  05/12/2022
-  Persistence
-- Example
-  val result = input.map(x => x \* x)
-  result.persist(StorageLevel.DISK_ONLY)
-  println(result.count())
-  println(result.collect().mkString(","))
-  67
-  67
-  Books:
-- Holden Karau, Andy Konwinski,
-  Patrick Wendell & Matei Zaharia.
-  Learning Spark. Oreilly
-- TutorialsPoint. Spark Core
-  Programming
-  Acknowledgement
-  & References
-  Slides:
-- Paco Nathan. Intro to Apache
-  Spark
-- Harold Liu. Berkely Data
-  Analytics Stack
-- DataBricks. Intro to Spark
-  Development
-  68
-  68
-  34
-  19/12/2022
-  Lecture 2: Load & Inspect Data in Spark
-  1
-  IT4043E
-  Lưu trữ và phân tích data lớn
-  IT4043E
-  12/2022
-  Thanh-Chung Dao Ph.D.
-  1
-  Agenda
-  Zeppelin notebook
-  Load, inspect, & save data
-  What & why we need it?
-  Loading data from difference sources
-  Installation using Docker
-  Simple inspecting commands
-  Usage
-  Saving data
-  2
-  2
-  1
-  19/12/2022
-  Zeppelin notebook
-- A web-based interface for interactive data
-  analytics
-- Easy to write & access your code
-- Support many programming languages
-- Scala (with Apache Spark), Python (with Apache Spark),
-  SparkSQL, Hive, Markdown, Angular, & Shell
-- Data visualization
+  - Transformation: lazy evaluation
+  - Action: execution at any time
+- Transformation
+  - Can operate on any no. input RDDs
+  - Spark keeps track dependencies between RDDs, called lineage graph
+  - Allow recovering lost data
+  - filter()
+    - not change existing inputRDD
+    - returns a pointer to an entirely new RDD
+    - inputRDD still can be reused
+    ```
+    inputRDD = sc.textFile("log.txt")
+    errorsRDD = inputRDD.filter(lambda x: "error" in x)
+    ```
+  - union()
+    ```
+    errorsRDD = inputRDD.filter(lambda x: "error" in x)
+    warningsRDD=inputRDD.filter(lambda x: "warning" in x)
+    badLinesRDD = errorsRDD.union(warningsRDD)
+    ```
+- Count no. errors
+
+```
+print("Input had " + badLinesRDD.count() + " concerning lines")
+print("Here are 10 examples:")
+for line in badLinesRDD.take(10):
+  print(line)
+```
+
+## Load & Inspect Data in Spark
+
+### Zeppelin notebook
+
+- A web-based interface for interactive data analytics
+  - Easy to write & access your code
+  - Support many programming languages
+    - Scala (with Apache Spark), Python (with Apache Spark), SparkSQL, Hive, Markdown, Angular, & Shell
+  - Data visualization
 - Monitoring Spark jobs
-  3
-  3
-  Installation using Docker
-- Install Docker & login
-- https://docs.docker.com/docker-for-windows/install/
-- https://docs.docker.com/docker-for-mac/install/
-- Download lecture's git repository
-- https://github.com/bk-blockchain/big-data-class
-- Run Zeppelin using docker-composer
-- docker-compose up -d --build spark_master
-- http://localhost
-  4
-  4
-  2
-  19/12/2022
-  Zeppelin usage
-- Run first node: "About this Build"
-- Check Spark version
-- Check Spark running mode
-- http://localhost:4040
-- Need to start Spark first by running first note
-- Run second node: "Tutorial/Basic Features
-  (Spark)"
-- Load data into table
-- SQL example
-  5
-  5
-  Useful Docker commands
-- Login to a container
-- docker ps (get any container id)
-- docker exec -it container_id bash
-- List all containers: docker ps -a
-- Stop a container: docker stop container_id
-- Start a stopped container: docker start
-  container_id
-  6
-  6
-  3
-  19/12/2022
-  Load, inspect, & save data
-- Data is always huge that does not fit on a
-  single machine
-- Data is distributed on many storage nodes
-- Data scientists can likely focus on format
-  that their data is already in
-- Engineers may wish to explore more output formats
+
+### Load, inspect & save data
+
+- Data is always huge that does not fit on a single machine
+  - Data is distributed on many storage nodes
+- Data scientists can likely focus on format that their data is already in
+  - Engineers may wish to explore more output formats
 - Spark supports a wide range of input & output sources
-  7
-  7
-  Data sources
+
+### Data sources
+
 - File formats & filesyss
-- Local or distributed filesys, such as NFS, HDFS,
-  or Amazon S3
-- File formats including text, JSON, SequenceFiles,
-  & protocol buffers
+  - Local or distributed filesys, such as NFS, HDFS or Amazon S3
+  - File formats including text, JSON, SequenceFiles & protocol buffers
 - Structured data sources through Spark SQL
-- Apache Hive
-- Parquet
-- JSON
-- From RDDs
+  - Apache Hive
+  - Parquet
+  - JSON
+  - From RDDs
 - Databases & key/value stores
-- Cassandra, HBase, Elasticsearch, & JDBC dbs
-  8
-  8
-  4
-  19/12/2022
-  File Formats
-- Formats range from unstructured, like text, to
-  semistructured, like JSON, to structured, like
-  SequenceFiles
-  From Learning Spark [1]
-  9
-  9
-  Lab: loading, inspecting, & saving data
-- On Zeppelin notebook
-- http://localhost:8080/#/notebook/2EAMFFAH7
-  10
-  10
-  5
-  19/12/2022
-  References
-- [1] Karau, Holden, et al. Learning spark:
-  lightning-fast big data analysis. " O'Reilly
-  Media, Inc.", 2015.
-  11
-  11
-  6
-  12/19/22
-  Lecture 3: Workinng with Pair RDDs & DataFrame
-  1
-  IT4043E
-  Tích hợp và xử lý data lớn
-  IT4043E
-  12/2022
-  Thanh-Chung Dao Ph.D.
-  1
-  From where to learn Spark ?
-  http://spark.apache.org/
-  http://shop.oreilly.com/product/0636920028512.do
-  2
-  1
-  12/19/22
-  Spark architecture
-  3
-  Easy ways to run Spark ?
-  ★ your IDE (ex. Eclipse or IDEA)
-  ★ Standalone Deploy Mode: simplest way to deploy Spark
-  on a single machine
-  ★ Docker & Zeppelin
-  ★ EMR
-  ★ Hadoop vendors (Cloudera, Hortonworks)
-  Digital Ocean (Kuberneste cluster)
-  4
-  2
-  12/19/22
-  Supported languages
-  5
-  RDD
-  An RDD is simply an immutable distributed collection of
-  objects!
-  a
-  b
-  c
-  d
-  e
-  f
-  g
-  h
-  i
-  j
-  k
-  l
-  m
-  n
-  o
-  p
-  q
-  6
-  3
-  12/19/22
-  RDD (Resilient Distributed Dataset)
-  RDD (Resilient Distributed Dataset)
+  - Cassandra, HBase, Elasticsearch, & JDBC dbs
+
+### File Formats
+
+- unstructured
+  - text
+- semistructured
+  - JSON
+- structured
+  - SequenceFiles
+
+## Pair RDDs & DataFrame
+
+### RDD (Resilient Distributed Dataset)
+
+- Immutable distributed collection of objects
+
   - Resilient: If data in memory is lost, it can be recreated
   - Distributed: Processed across cluster
-  - Dataset: Initial data can come from a source such as a
-    file, or it can be created programmatically
-- RDDs are fundamental unit of data in Spark
-- Most Spark programming consists of performing
-  operations on RDDs
-  7
-  Creating RDD (I)
-  Python
-  lines = sc.parallelize(["workshop", "spark"])
-  Scala
-  val lines = sc.parallelize(List("workshop", "spark"))
-  Java
-  JavaRDD<String> lines = sc.parallelize(Arrays.asList("workshop", "spark"))
-  8
-  4
-  12/19/22
-  Creating RDD (II)
-  Python
-  lines = sc.textFile("/path/to/file.txt")
-  Scala
-  val lines = sc.textFile("/path/to/file.txt")
-  Java
-  JavaRDD<String> lines = sc.textFile("/path/to/file.txt")
-  9
-  RDD persistence
-  MEMORY_ONLY
-  MEMORY_AND_DISK
-  MEMORY_ONLY_SER
-  MEMORY_AND_DISK_SER
-  DISK_ONLY
-  MEMORY_ONLY_2
-  MEMORY_AND_DISK_2
-  OFF_HEAP
-  10
-  5
-  12/19/22
-  Working with RDDs
-  11
-  RDDs
-  RDDs can hold any serializable type of element
-  -Primitive types such as integers, characters, & booleans
-  -Sequence types such as strings, lists, arrays, tuples,
-  & dicts (including nested data types)
-  -Scala/Java Objects (if serializable)
-  -Mixed types
-  § Some RDDs are specialized & have additional
-  funcality
-  -Pair RDDs
-  -RDDs consisting of key-value pairs
-  -Double RDDs
-  -RDDs consisting of numeric data
-  12
-  6
-  12/19/22
-  Creating RDDs from Collections
-  You can create RDDs from collections instead of files
-  -sc.parallelize(collection)
-  myData = ["Alice","Carlos","Frank","Barbara"]
-  > myRdd = sc.parallelize(myData)
-  > myRdd.take(2) ['Alice', 'Carlos']
-  > 13
-  > Creating RDDs from Text Files (1)
-  > For file-based RDDs, use SparkContext.textFile
-  >
-  > - Accepts a single file, a directory of files, a wildcard list of
-  >   files, or a comma-separated list of files. Examples:
-  >   -sc.textFile("myfile.txt")
-  >   -sc.textFile("mydata/")
-  >   -sc.textFile("mydata/\*.log")
-  >   -sc.textFile("myfile1.txt,myfile2.txt")
-  >   -Each line in each file is a separate record in RDD
-  >   Files are referenced by absolute or relative URI
-  >   -Absolute URI:
-  >   -file:/home/training/myfile.txt
-  >   -hdfs://nnhost/loudacre/myfile.txt
-  >   14
-  >   7
-  >   12/19/22
-  >   Examples: Multi-RDD Transformations (1)
-  >   15
-  >   Examples: Multi-RDD Transformations (2)
-  >   16
-  >   8
-  >   12/19/22
-  >   Some Other General RDD Operations
-  >   Other RDD operations
-  >   -first returns first element of RDD
-  >   -foreach applies a func to each element in an RDD
-  >   -top(n) returns largest n elements using natural ordering
-  >   Sampling operations
-  >   -sample creates a new RDD with a sampling of elements
-  >   -take Sample returns an array of sampled elements
-  >   17
-  >   Other data structures in Spark
-  >   ★ Paired RDD
-  >   ★ DataFrame
-  >   ★ DataSet
-  >   18
-  >   9
-  >   12/19/22
-  >   Paired RDD
-  >   Paired RDD = an RDD of key/value pairs
-  >   user1
-  >   id1/user1
-  >   user2
-  >   id2/user2
-  >   user3
-  >   user4
-  >   id3/user3
-  >   id4/user4
-  >   user5
-  >   id5/user5
-  >   19
-  >   Pair RDDs
-  >   20
-  >   10
-  >   12/19/22
-  >   Pair RDDs
-  >   § Pair RDDs are a special form of RDD
-  >   -Each element must be a keyvalue pair (a two-element tuple)
-  >   -Keys & values can be any type
-  >   § Why?
-  >   -Use with map-reduce algorithms
-  >   -Many additional funcs are
-  >   available for common data
-  >   processing needs
-  >   -Such as sorting, joining, grouping,
-  >   & counting
-  >   21
-  >   Creating Pair RDDs
-  >   The first step in most workflows is to get data into
-  >   key/value form
-  >   -What should RDD should be keyed on?
-  >   -What is value?
-  >   Commonly used funcs to create pair RDDs
-  >   -map
-  >   -flatMap / flatMapValues
-  >   -keyBy
-  >   22
-  >   11
-  >   12/19/22
-  >   Example: A Simple Pair RDD
-  >   Example: Create a pair RDD from a tab-separated file
-  >   23
-  >   Example: Keying Web Logs by User ID
-  >   24
-  >   12
-  >   12/19/22
-  >   Mapping Single Rows to Multiple Pairs
-  >   25
-  >   Answer : Mapping Single Rows to
-  >   Multiple Pairs
-  >   26
-  >   13
-  >   12/19/22
-  >   Map-Reduce
-  >   § Map-reduce is a common programming model
-  >   -Easily applicable to distributed processing of large
-  >   data sets
-  >   § Hadoop MapReduce is major implementation
-  >   -Somewhat limited
-  >   -Each job has 1 map phase, 1 reduce phase
-  >   -Job output is saved to files
-  >   § Spark implements map-reduce with much greater
-  >   flexibility
-  >   -Map & reduce funcs can be interspersed
-  >   -Results can be stored in memory
-  >   -Operations can easily be chained
-  >   27
-  >   Map-Reduce in Spark
-  >   § Map-reduce in Spark works on pair RDDs
-  >   § Map phase
-  >   -Operates on 1 record at a time
-  >   -"Maps" each record to zero or more new records
-  >   -Examples: map, flatMap, filter, keyBy
-  >   § Reduce phase
-  >   -Works on map output
-  >   -Consolidates multiple records
-  >   -Examples: reduceByKey, sortByKey, mean
-  >   28
-  >   14
-  >   12/19/22
-  >   Example: Word Count
-  >   29
-  >   reduceByKey
-  >   The func passed to reduceByKey combines values
-  >   from 2 keys
-  > - func must be binary
-  >   30
-  >   15
-  >   12/19/22
-  >   val counts = sc.textFile (£i1e) . flat.Map
-  >   (line => line.sp lit (' ')) . map (word => (word
-  >   ,l)) . reduceByKey ((vl ,v2 ) => vl+v2)
-  >   OR
-  >   ,,
-  >   val counts = sc.textFile (£i1e) . flat.Map
-  >   (_.split (' 1 ) ) -
-  >   map ((_ ,1)) .
-  >   reduceByKey(_+_ )
-  >   31
-  >   Pair RDD Operations
-  >   § In addition to map & reduceByKey operations, Spark
-  >   has several operations specific to pair RDDs
-  >   § Examples
-  >   -countByKey returns a map with count of
-  >   occurrences
-  >   of each key
-  >   -groupByKey groups all values for each key in an
-  >   RDD
-  >   -sortByKey sorts in ascending or descending order
-  >   -join returns an RDD containing all pairs with matching
-  >   keys from 2 RDD
-  >   32
-  >   16
-  >   12/19/22
-  >   Example: Pair RDD Operations
-  >   33
-  >   Example: Joining by Key
-  >   34
-  >   17
-  >   12/19/22
-  >   Other Pair Operations
-  >   § Some other pair operations
-  >   -keys returns an RDD of just keys, without values
-  >   -values returns an RDD of just values, without keys
-  >   -lookup(key) returns value(s) for a key
-  >   -leftOuterJoin, rightOuterJoin , fullOuterJoin join 2 RDDs,
-  >   including keys defined in left, right or either RDD
-  >   respectively
-  >   -mapValues, flatMapValues execute a func on just > values,
-  >   keeping key same
-  >   35
-  >   DataFrames & Apache Spark SQL
-  >   36
-  >   18
-  >   12/19/22
-  >   What is Spark SQL?
-  >   §
-  >   What is Spark SQL?
-  >   -Spark module for structured data processing
-  >   -Replaces Shark (a prior Spark module, now deprecated)
-  >   -Built on top of core Spark
-  >   § What does Spark SQL provide?
-  >   -The DataFrame API—a library for working with data as
-  >   tables
-  >   -Defines DataFrames containing rows & columns
-  >   -DataFrames are focus of this chapter!
-  >   -Catalyst Optimizer—an extensible optimization framework
-  >   -A SQL engine & command line interface
-  >   37
-  >   SQL Context
-  >   § main Spark SQL entry point is a SQL context object
-  >   -Requires a SparkContext object
-  >   -The SQL context in Spark SQL is similar to Spark context in
-  >   core Spark
-  >   § There are 2 implementations
-  >   -SQLContext
-  >   -Basic implementation
-  >   -HiveContext
-  >   -Reads & writes Hive/HCatalog tables directly
-  >   -Supports full HiveQL language
-  >   -Requires Spark application be linked with Hive libraries
-  >   -Cloudera recommends using HiveContext
-  >   38
-  >   19
-  >   12/19/22
-  >   Creating a SQL Context
-  >   §
-  >   The Spark shell creates a HiveContext instance automatically
-  >   -Call sqlContext
-  >   -You will need to create 1 when writing a Spark
-  >   application
-  >   -Having multiple SQL context objects is allowed
-  >   § A SQL context object is created based on Spark context
-  >   39
-  >   DataFrames
-  >   § DataFrames are main abstraction in Spark SQL
-  >   -Analogous to RDDs in core Spark
-  >   -A distributed collection of structured data organized
-  >   into Named columns
-  >   -Built on a base RDD containing Row objects
-  >   40
-  >   20
-  >   12/19/22
-  >   Creating a DataFrame from a Data
-  >   Source
-  >   §
-  >   sqlContext.read returns a DataFrameReader object
-  >   § DataFrameReader provides funcality to load data into
-  >   a DataFrame
-  >   § Convenience funcs
-  >   -json(filename)
-  >   -parquet(filename)
-  >   -orc(filename)
-  >   -table(hive-tablename)
-  >   -jdbc(url,table,options)
-  >   41
-  >   Example: Creating a DataFrame from a
-  >   JSON File
-  >   42
-  >   21
-  >   12/19/22
-  >   Example: Creating a DataFrame from a
-  >   Hive/Impala Table
-  >   43
-  >   Loading from a Data Source Manually
-  >   § You can specify settings for DataFrameReader
-  >   -format: Specify a data source type
-  >   -option: A key/value setting for underlying data source
-  >   -schema: Specify a schema instead of inferring from data
-  >   source
-  >   § Then call generic base func load
-  >   44
-  >   22
-  >   12/19/22
-  >   Data Sources
-  >   Spark SQL 1.6 built-in data source types
-  >   -table
-  >   -json
-  >   -parquet
-  >   -jdbc
-  >   -orc
-  >   § You can also use third party data source libraries, such as
-  >   -Avro (included in CDH)
-  >   -HBase
-  >   -CSV
-  >   -MySQL
-  >   -and more being added all time
-  >   §
-  >   45
-  >   DataFrame Basic Operations
-  >   Basic operations deal with DataFrame metadata (rather than
-  >   its data)
-- § Some examples
-- -schema returns a schema object describing data
-- -printSchema displays schema as a visual tree
-- -cache / persist persists DataFrame to disk or memory
-- §
-- -columns returns an array containing names of columns
-- -dtypes returns an array of (column name,type) pairs
-- -explain prints debug information about DataFrame to
-  console
-  46
-  23
-  12/19/22
-  DataFrame Basic Operations
-  47
-  DataFrame Actions
-  §
-  Some DataFrame actions
-  -collect returns all rows as an array of Row
-  objects
-  -take(n) returns first n rows as an array
-  of Row objects
-  -count returns no. rows
-  -show(n)displays first n rows
-  (default=20)
-  48
-  24
-  12/19/22
-  DataFrame Queries
-  DataFrame query methods return new DataFrames
-  - Queries can be chained like transformations
-    § Some query methods
-    -distinct returns a new DataFrame with distinct elements of
-    this DF
-    -join joins this DataFrame with a second DataFrame
-  - Variants for inside, outside, left, & right joins
-    -limit returns a new DataFrame with first n rows of this DF
-    -select returns a new DataFrame with data from 1 or
-    more columns of base DataFrame
-    -where returns a new DataFrame with rows meeting
-    specified query criteria (alias for filter)
-    §
-    49
-    DataFrame Query Strings
-    50
-    25
-    12/19/22
-    Querying DataFrames using Columns
-    § Columns can be referenced in multiple ways
-    51
-    Joining DataFrames
-    §
-    A basic inner join when join column is in both DataFrames
-    52
-    26
-    12/19/22
-    Joining DataFrames
-    53
-    SQL Queries
-    § When using HiveContext, you can query Hive/Impala
-    tables using HiveQL
-  - Returns a DataFrame
-    54
-    27
-    12/19/22
-    Saving DataFrames
-    Data in DataFrames can be saved to a data source
-    § Use DataFrame.write to create a DataFrameWriter
-    § DataFrameWriter provides convenience funcs to
-    externally save
-    the data represented by a DataFrame
-    -jdbc inserts into a new or existing table in a database
-    -json saves as a JSON file
-    -parquet saves as a Parquet file
-    -orc saves as an ORC file
-    -text saves as a text file (string data in a single column only)
-    -saveAsTable saves as a Hive/Impala table (HiveContext only)
-    §
-    55
-    Options for Saving DataFrames
-    § DataFrameWriter option methods
-    -format specifies a data source type
-    -mode determines behavior if file or
-    table already exists:
-    overwrite, append, ignore or error (default
-    is error)
-    -partitionBy stores data in partitioned
-    directories in form
-    column=value (as with Hive/Impala
-    partitioning)
-    -options specifies properties for target
-    data source
-    -save is generic base func to write
-    the data
-    56
-    28
-    12/19/22
-    DataFrames & RDDs
-    § DataFrames are built on RDDs
-    -Base RDDs contain Row objects
-    -Use rdd to get underlying RDD
-    57
-    DataFrames & RDDs
-    § Row RDDs have all standard Spark actions & transformations
-    -Actions: collect, take, count, & so on
-    -Transformations: map, flatMap, filter, & so on
-    § Row RDDs can be transformed into pair RDDs to use
-    mapreduce methods
-    § DataFrames also provide convenience methods (such as
-    map, flatMap,and foreach)for converting to RDDs
-    58
-    29
-    12/19/22
-    Working with Row Objects
-    -Use Array-like syntax to return values with type Any
-    -row(n) returns element in nth column
-    -row.fieldIndex("age")returns index of age column
-    -Use methods to get correctly typed values
-    -row.getAs[Long]("age")
-    -Use type-specific get methods to return typed values
-    -row.getString(n) returns nth column as a string
-    -row.getInt(n) returns nth column as an integer
-    -And so on
-    59
-    Example: Extracting Data from Row
-    Objects
-    60
-    30
-    12/19/22
-    Converting RDDs to DataFrames
-    §
-    You can also create a DF from an RDD using createDataFrame
-    61
-    Working with
-    Spark RDDs, Pair-RDDs
-    © 2019 Binh Minh
-    Nguyen
-    Hanoi University of Science & Technology
-    62
-    62
-    31
-    12/19/22
-    RDD Operations
-    Transformations
-    map()
-    flatMap()
-    filter()
-    union()
-    intersection()
-    distinct()
-    groupByKey()
-    reduceByKey()
-    sortByKey()
-    join()
-    …
-    Actions
-    count()
-    collect()
-    first(), top(n)
-    take(n), takeOrdered(n)
-    countByValue()
-    reduce()
-    foreach()
-    …
-    © 2019 Binh Minh
-    Nguyen
-    Hanoi University of Science & Technology
-    63
-    63
-    Lambda Expression
-    PySpark WordCount example:
-    input_file = sc.textFile("/path/to/text/file")
-    map = input_file.flatMap(lambda line: line.split(" ")) \
-    .map(lambda word: (word, 1))
-    counts = map.reduceByKey(lambda a, b: a + b)
-    counts.saveAsTextFile("/path/to/output/")
-    lambda arguments: expression
-    © 2019 Binh Minh
-    Nguyen
-    Hanoi University of Science & Technology
-    64
-    64
-    32
-    12/19/22
-    PySpark RDD API
-    https://spark.apache.org/docs/latest/api/python/pyspark.htm
-    l#pyspark.RDD
-    © 2019 Binh Minh
-    Nguyen
-    Hanoi University of Science & Technology
-    65
-    65
-    Practice with flight data (1)
-    Data: airports.dat (https://openflights.org/data.html)
-    [Airport ID, Name, City, Country, IATA, ICAO, Latitude, Longitude, Altitude,
-    Timezone, DST, Tz database, Type, Source]
-    Try to do somethings:
-- Create RDD from textfile
-- Count no. airports
-- Filter by country
-- Group by country
-- Count no. airports in each country
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  66
-  66
-  33
-  12/19/22
-  Practice with flight data (2)
-  - Data: airports.dat (https://openflights.org/data.html)
-    [Airport ID, Name, City, Country, IATA, ICAO, Latitude, Longitude, Altitude,
-    Timezone, DST, Tz database, Type, Source]
-  - Data: routes.dat
-    [Airline, Airline ID, Source airport, Source airport ID, Destination airport,
-    Destination airport ID, Codeshare, Stops, Equipment]
-    Try to do somethings:
-- Join 2 RDD
-- Count no. flights arriving in each country
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  67
-  67
-  Working with
-  DataFrame & Spark SQL
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  68
-  68
-  34
-  12/19/22
-  Creating a DataFrame(1)
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  69
-  69
-  Creating a DataFrame
-  From CSV file:
-  From RDD:
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  70
-  70
-  35
-  12/19/22
-  DataFrame APIs
-- DataFrame: show(), collect(), createOrReplaceTempView(),
-  distinct(), filter(), select(), count(), groupBy(), join()…
-- Column: like()
-- Row: row.key, row[key]
-- GroupedData: count(), max(), min(), sum(), …
-  https://spark.apache.org/docs/latest/api/python/pyspark.sql.html
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  71
-  71
-  Spark SQL
-- Create a temporary view
-- Query using SQL syntax
-  © 2019 Binh Minh
-  Nguyen
-  Hanoi University of Science & Technology
-  72
-  72
-  36
-  26/12/2022
-  Lecture 4: Build simple Spark applications
-  1
-  IT4043E
-  Tích hợp và xử lý data lớn
-  IT4043E
-  12/2022
-  Thanh-Chung Dao Ph.D.
-  1
-  Spark running mode
-- Local
-- Clustered
-- Spark Standalone
-- Spark on Apache Mesos
-- Spark on Hadoop YARN
-  2
-  2
-  1
-  26/12/2022
-  Hello World: Word-Count
-  Figure from [1]
-  3
-  3
-  Run using command line
-- Turn on docker bash
-- spark-submit wordcount.py README.md
-- Result will be shown as follows
-  4
-  4
-  2
-  26/12/2022
-  Lab: Word-Count
-- Lab on Zeppelin notebook
-- Github source code
-- https://github.com/bk-blockchain/big-data-class
-  5
-  5
-  Flight data:
-- Analyzing flight data from United States
-  Bureau of Transportation statistics
-- Lab on Zeppelin notebook
-- Github source code
-- https://github.com/bk-blockchain/big-data-class
-  6
-  6
-  3
-  26/12/2022
-  References
-- [1]
-  https://datamize.wordpress.com/2015/02/08/vi
-  sualizing-basic-rdd-operations-throughwordcount-in-pyspark/
-  7
-  7
-  4
-  09/01/2023
-  Lecture 5: Spark Streaming
-  1
-  Big Data Processing
-  1/2023
-  Thanh-Chung Dao Ph.D.
-  1
-  Agenda
-- What is Spark Streaming
-- Operation on DStreams
-  2
-  2
-  1
-  09/01/2023
-  What is Spark Streaming
-  3
-  Email: info@pti.edu.vn | Website: pti.edu.vn
-  3
-  Spark Streaming
-- Scalable, fault-tolerant stream processing
-  sys
-- Receive data streams from input sources,
-  process them in a cluster, push out to
-  databases/dashboards
-  4
-  4
-  2
-  09/01/2023
-  How does it work?
-- stream is treated as a series of very small,
-  deterministic batches of data
+  - Dataset: Initial data can come from a source such as a file, or it can be created programmatically
+
+- can hold any serializable type of element
+  - Primitive types such as integers, characters, & booleans
+  - Sequence types such as strings, lists, arrays, tuples, & dicts (including nested data types)
+  - Scala/Java Objects (if serializable)
+  - Mixed types
+- Some RDDs are specialized & have additional funcality
+  - Pair RDDs
+  - RDDs consisting of key-value pairs
+  - Double RDDs
+  - RDDs consisting of numeric data
+- operations
+  - first
+    - returns first element of RDD
+  - foreach
+    - applies a func to each element in an RDD
+  - top(n)
+    - returns largest n elements using natural ordering
+  - Sampling operations
+    - sample
+      - creates a new RDD with a sampling of elements
+    - take
+      - Sample returns an array of sampled elements
+
+### Paired RDD
+
+- RDD of key/value pairs
+- special form of RDD
+  - Each element must be a keyvalue pair (a two-element tuple)
+  - Keys & values can be any type
+- Why?
+  - Use with map-reduce algorithms
+  - Many additional funcs are available for common data processing needs
+    - sorting, joining, grouping & counting
+- Creating Pair RDDs
+  - Get data into key/value form
+    - map
+    - flatMap / flatMapValues
+    - keyBy
+
+## Map-Reduce
+
+- Easily applicable to distributed processing of large data sets
+- Hadoop MapReduce is major implementation
+  - limited
+  - Each job has 1 map phase, 1 reduce phase
+  - Job output is saved to files
+- Spark implements map-reduce with greater flexibility
+  - Map & reduce funcs can be interspersed
+  - Results can be stored in memory
+  - Operations can easily be chained
+
+### Map-Reduce in Spark
+
+- Work on pair RDDs
+- Map phase
+  - Operates on 1 record at a time
+  - "Maps" each record to zero or more new records
+    - map
+    - flatMap
+    - filter
+    - keyBy
+- Reduce phase
+  - Works on map output
+  - Consolidates multiple records
+    - reduceByKey
+    - sortByKey
+    - mean
+
+### Pair RDD Operations
+
+- `countByKey`
+  - returns a map with count of occurrences of each key
+- `groupByKey`
+  - groups all values for each key in an RDD
+- `sortByKey`
+  - sorts in ascending or descending order
+- `join`
+  - returns an RDD containing all pairs with matching keys from 2 RDD
+- other operations
+  - `keys`
+    - returns an RDD of just keys, without values
+  - `values`
+    - returns an RDD of just values, without keys
+  - `lookup(key)`
+    - returns value(s) for a key
+  - `leftOuterJoin, rightOuterJoin, fullOuterJoin`
+    - join 2 RDDs, including keys defined in left, right or either RDD respectively
+  - `mapValues, flatMapValues`
+    - execute a func on just values, keeping key same
+
+## DataFrames & Apache Spark SQL
+
+### Spark SQL
+
+- Spark module for structured data processing
+- Built on top of core Spark
+  - DataFrame API
+    - a library for working with data as tables
+  - Defines DataFrames containing rows & columns
+  - DataFrames are focus of this chapter!
+  - Catalyst Optimizer
+    - an extensible optimization framework
+  - A SQL engine & command line interface
+
+### SQL Context
+
+- main Spark SQL entry point is a SQL context object
+  - Requires a SparkContext object
+  - Similar to Spark context in core Spark
+- 2 implementations
+  - SQLContext
+    - Basic implementation
+  - HiveContext
+    - Reads & writes Hive/HCatalog tables directly
+    - Supports full HiveQL language
+    - Requires Spark application be linked with Hive libraries
+    - Cloudera recommends using HiveContext
+- Creating a SQL Context
+  - The Spark shell creates a HiveContext instance automatically
+    - Call sqlContext
+    - Create 1 when writing a Spark application
+    - Having multiple SQL context objects is allowed
+  - SQL context object is created based on Spark context
+
+### DataFrames
+
+- Main abstraction in Spark SQL
+  - Analogous to RDDs in core Spark
+  - A distributed collection of structured data organized into Named columns
+  - Built on a base RDD containing Row objects
+- Load data
+  - `json(filename)`
+  - `parquet(filename)`
+  - `orc(filename)`
+  - `table(hive`
+  - `tablename)`
+  - `jdbc(url,table,options)`
+- Load from a Data Source Manually
+- Specify settings for DataFrameReader
+  - format: Specify a data source type
+  - option: A key/value setting for underlying data source
+  - schema: Specify a schema instead of inferring from data source
+- Then call generic base func load
+
+### Data Sources
+
+- table
+- json
+- parquet
+- jdbc
+- orc
+- third party data source libraries
+  - Avro (included in CDH)
+  - HBase
+  - CSV
+  - MySQL
+
+### DataFrame Basic Operations
+
+- Deal with metadata (rather than its data)
+  - `schema`
+    - returns a schema object describing data
+  - `printSchema`
+    - displays schema as a visual tree
+  - `cache / persist`
+    - persists DataFrame to disk or memory
+  - `columns`
+    - returns an array containing names of columns
+  - `dtypes`
+    - returns an array of (column name,type) pairs
+  - `explain`
+    - prints debug information about DataFrame to console
+
+### DataFrame Actions
+
+- `collect`
+  - returns all rows as an array of Row objects
+- `take(n)`
+  - returns first n rows as an array of Row objects
+- `count`
+  - returns no. rows
+- `show(n)`
+  - displays first n rows (default=20)
+
+### DataFrame Queries
+
+- Return new DataFrames
+- Can be chained like transformations
+  - `distinct`
+    - returns a new DataFrame with distinct elements of this DF
+  - `join`
+    - joins this DataFrame with a second DataFrame
+    - Variants for inside, outside, left, & right joins
+  - `limit`
+    - returns a new DataFrame with first n rows of this DF
+  - `select`
+    - returns a new DataFrame with data from 1 or more columns of base DataFrame
+  - `where`
+    - returns a new DataFrame with rows meeting specified query criteria (alias for filter)
+
+### Saving DataFrames
+
+- DataFrame.write to create a DataFrameWriter
+- provides convenience funcs to externally save data represented by a DataFrame
+  - `jdbc`
+    - inserts into a new or existing table in a database
+  - `json`
+    - saves as a JSON file
+  - `parquet`
+    - saves as a Parquet file
+  - `orc`
+    - saves as an ORC file
+  - `text`
+    - saves as a text file (string data in a single column only)
+  - `saveAsTable`
+    - saves as a Hive/Impala table (HiveContext only)
+- Options for Saving DataFrames
+  - `format`
+    - specifies a data source type
+  - `mode`
+    - determines behavior if file or table already exists: overwrite, append, ignore or error (default is error)
+  - `partitionBy`
+    - stores data in partitioned directories in form column=value (as with Hive/Impala partitioning)
+  - `options`
+    - specifies properties for target data source
+  - `save`
+    - generic base func to write data
+
+### DataFrames & RDDs
+
+- DataFrames are built on RDDs
+  - Base RDDs contain Row objects
+  - Use rdd to get underlying RDD
+- Row RDDs have all standard Spark actions & transformations
+  - Actions: collect, take, count
+  - Transformations: map, flatMap, filter
+- Row RDDs can be transformed into pair RDDs to use mapreduce methods
+- DataFrames also provide convenience methods (such as map, flatMap,and foreach) for converting to RDDs
+
+### Working with Row Objects
+
+- Array-like syntax to return values with type Any
+  - `row(n)`
+    - returns element in nth column
+  - `row.fieldIndex("age")`
+    - returns index of age column
+- methods to get correctly typed values
+  - `row.getAs[Long]("age")`
+- type-specific get methods to return typed values
+  - `row.getString(n)`
+    - returns nth column as a string
+  - `row.getInt(n)`
+    - returns nth column as an integer
+
+## Spark Streaming
+
+- Scalable, fault-tolerant stream processing sys
+  - Receive data streams from input sources
+  - process them in a cluster
+  - push out to databases/dashboards
+
+### How does it work?
+
+- stream is treated as a series of very small, deterministic batches of data
 - Spark treats each batch of data as RDDs & processes them using RDD operations
 - Processed results are pushed out in batches
-  5
-  5
-  Discretized Stream (DStream)
-- Sequence of RDDs representing a stream of
-  data
-  6
-  6
-  3
-  09/01/2023
-  Discretized Stream (DStream)
-- Any operation applied on a DStream translates
-  to operations on underlying RDDs
-  7
-  7
-  StreamingContext
-- main entry point of all Spark Streaming
-  funcality
-  val conf = new
-  SparkConf().setAppName(appName).setMaster(master)
-  val ssc = new StreamingContext(conf, batchinterval)
-- appname: name of application
-- master: a Spark, Mesos, or YARN cluster URL
-- batchinternval: time interval (in second) of
-  each batch
-  8
-  8
-  4
-  09/01/2023
-  Operation on DStreams
-  9
-  Email: info@pti.edu.vn | Website: pti.edu.vn
-  9
-  Operation on DStreams
-- 3 categories
-- Input operation
-- Transformation operation
-- Output operation
-  10
-  10
-  5
-  09/01/2023
-  Input Operations
-- Every input DStream is associated with a
-  Receiver object
+- Discretized Stream (DStream)
+  - Sequence of RDDs representing a stream of data
+  - Any operation applied on a DStream translates to operations on underlying RDDs
+- StreamingContext
+  - main entry point of all Spark Streaming
+
+### Operation on DStreams
+
+#### Input Operations
+
+- Every input DStream is associated with a Receiver object
 - 2 built-in categories of streaming sources:
-- Basic sources, e.g., FSs, socket connection
-- Advanced sources, e.g., Twitter, Kafka
-  11
-  11
-  Input Operations
-- Basic sources
-- Socket connection
-  // Create a DStream that will connect to hostname:port
-  ssc.socketTextStream("localhost", 9999)
-- File stream
-  streamingContext.fileStream[…](dataDirectory)
-- Advanced sources
-  val ssc = new StreamingContext(sparkContext, Seconds(1))
-  val tweets = TwitterUtils.createStream(ssc, auth)
-  12
-  12
-  6
-  09/01/2023
-  Transformation
-  13
-  13
-  Transformation
-  Transformation
-  Meaning
-  map (func)
-  Return a new DStream by passing each element of
-  the source DStream through a func func
-  flatmap(func)
-  Similar to map, but each input item can be mapped
-  to 0 or more output items
-  filter(func)
-  Return a new DStream by selecting only records
-  of source DStream on which func returns true
-  14
-  14
-  7
-  09/01/2023
-  Transformation
-  Transformation
-  Meaning
-  count
-  Return a new DStream of single-element RDDs by
-  counting no. elements in each RDD of
-  the source DStream
-  countbyValue
-  Returns a new DStream of (K, Long) pairs where
-  the value of each key is its frequency in each RDD
-  of source DStream.
-  reduce(func)
-  Return a new DStream of single-element RDDs by
-  aggregating elements in each RDD of source DStream using a func func (which takes
-  2 arguments & returns one).
-  reducebyKey(func)
-  When called on a DStream of (K, V) pairs, return a
-  new DStream of (K, V) pairs where values for
-  each key are aggregated using given reduce
-  func
-  15
-  15
-  Transformation
-  Transformation
-  Meaning
-  union(otherStream) Return a new DStream that contains union of
-  the elements in source DStream & otherDStream.
-  join(otherStream)
-  When called on 2 DStreams of (K, V) & (K, W)
-  pairs, return a new DStream of (K, (V, W)) pairs
-  with all pairs of elements for each key.
-  16
-  16
-  8
-  09/01/2023
-  Window Operations
-- Spark provides a set of transformations that
-  apply to a sliding window of data
+  - Basic sources
+    - FSs, socket connection
+  - Advanced sources
+    - Twitter, Kafka
+
+#### Transformation
+
+- `map(func)`
+  - Return a new DStream by passing each element of the source DStream through a func func
+- `flatmap(func)`
+  - Similar to map, but each input item can be mapped to 0 or more output items
+- `filter(func)`
+  - Return a new DStream by selecting only records of source DStream on which func returns true
+- `count`
+  - Return a new DStream of single-element RDDs by counting no. elements in each RDD of source DStream
+- `countbyValue`
+  - Returns a new DStream of (K, Long) pairs where value of each key is its frequency in each RDD of source DStream.
+- `reduce(func)`
+  - Return a new DStream of single-element RDDs by aggregating elements in each RDD of source DStream using a func func (which takes 2 arguments & returns one).
+- `reducebyKey(func)`
+  - When called on a DStream of (K, V) pairs, return a new DStream of (K, V) pairs where values for each key are aggregated using given reduce func
+- `union(otherStream)`
+  - Return a new DStream that contains union of elements in source DStream & otherDStream.
+- `join(otherStream)`
+  - When called on 2 DStreams of (K, V) & (K, W) pairs, return a new DStream of (K, (V, W)) pairs with all pairs of elements for each key.
+
+#### Window Operations
+
+- apply to a sliding window of data
 - A window is defined by: window length & siding interval
-  17
-  17
-  Window Operations
-- window(windowLength, slideInterval)
-- Returns a new DStream which is computed based on
-  windowed batches
-- countByWindow(windowLength, slideInterval)
-- Returns a sliding window count of elements in stream.
-- reduceByWindow(func, windowLength,
-  slideInterval)
-- Returns a new single-element DStream, created by
-  aggregating elements in stream over a sliding
-  interval using func.
-  18
-  18
-  9
-  09/01/2023
-  Output Operation
-- Push out DStream's data to external syss,
-  e.g., a database or a FS
-  Operation
-  Meaning
-  print
-  Prints first ten elements of every batch of data
-  in a DStream on driver node running application
-  saveAsTextFiles
-  Save this DStream's contents as text files
-  saveAsHadoopFiles
-  Save this DStream's contents as Hadoop files.
-  foreachRDD(func)
-  Applies a func, func, to each RDD generated
-  from stream
-  19
-  19
-  Example
-  Word Count
-  val context = new StreamingContext(conf, Seconds(1))
-  val lines = context.socketTextStream(...)
-  val words = lines.flatMap(_.split(" "))
-  val wordCounts = words.map(x => (x, 1)).reduceByKey(_+\_)
-  wordCounts.print()
-  context.start()
-  Print DStream contents on screen
-  Start streaming job
-  20
-  20
-  10
-  09/01/2023
-  Lifecycle of a streaming app
-  21
-  21
-  Execution in any Spark Application
-  22
-  22
-  11
-  09/01/2023
-  Execution in Spark Streaming: Receiving data
-  23
-  23
-  Execution in Spark Streaming: Processing data
-  24
-  24
-  12
-  09/01/2023
-  End-to-end view
-  DStreamGraph
-  Input
-  DStreams
-  DAG of RDDs
-  every interval
-  T
-  B
-  B
-  T
-  U
-  t.saveAsHadoopFiles(…)
-  t.map(…).foreach(…)
-  t.filter(…).foreach(…)
-  Stage 2
-  Stage 2
-  Stage 2
-  M
-  M
-  M
-  F
-  M
-  M
-  F
-  FE
-  FE
-  M
-  F
-  M
-  Output
-  operations
-  YOU
-  write this
-  B
-  U
-  M
-  FE
-  Stage 1
-  Stage 1
-  Stage 1
-  B
-  B
-  U
-  U
-  t = t1.union(t2).map(…)
-  Tasks
-  every interval
-  BlockRDDs
-  B
-  t1 = ssc.socketStream("…")
-  t2 = ssc.socketStream("…")
-  DAG of stages
-  every interval
-  Executors
-  Streaming app
-  F
-  Stage 3
-  Stage 3
-  Stage 3
-  RDD Actions /
-  Spark Jobs
-  Spark Streaming
-  JobScheduler + JobGenerator
-  Spark
-  DAGScheduler
-  Spark
-  TaskScheduler
-  16
-  25
-  25
-  Dynamic Load Balancing
-  26
-  26
-  13
-  09/01/2023
-  Fast failure & Straggler recovery
-  27
-  27
-  Books:
-- Holden Karau, Andy Konwinski,
-  Patrick Wendell & Matei Zaharia.
-  Learning Spark. Oreilly
-- James A. Scott. Getting started with
-  Apache Spark. MapR Technologies
-  Acknowledgement
-  & References
-  Slides:
-- Amir H. Payberah. Scalable Stream
-  Processing - Spark Streaming & Flink
-- Matteo Nardelli. Spark Streaming:
-  Hands on Session
-- DataBricks. Spark Streaming
-- DataBricks: Spark Streaming: Best
-  Practices
-  28
-  28
-  14
-  30/01/2023
-  L6: Use Spark ML to do basic Machine learning algorithm
-  1
-  Big Data Processing
-  1/2023
-  Thanh-Chung Dao Ph.D.
-  1
-  Machine learning
-  From [1]
-  2
-  2
-  1
-  30/01/2023
-  Machine Learning Lifecycle
-- 2 major phases
-- Training Set
-- You have complete training dataset
-- You can extract features & train to fit a model.
-- Testing Set
-- Once model is obtained, you can predict using model obtained on training set
-  From [2]
-  3
-  3
-  Spark ML & PySpark
-- Spark ML is a machine-learning library
+  - `window(windowLength, slideInterval)`
+    - Returns a new DStream which is computed based on windowed batches
+  - `countByWindow(windowLength, slideInterval)`
+    - Returns a sliding window count of elements in stream.
+  - `reduceByWindow(func, windowLength, slideInterval)`
+    - Returns a new single-element DStream, created by aggregating elements in stream over a sliding interval using func.
+
+#### Output Operation
+
+- Push out DStream's data to external syss, a database or a FS
+- `print`
+  - Prints first ten elements of every batch of data in a DStream on driver node running application
+- `saveAsTextFiles`
+  - Save this DStream's contents as text files
+- `saveAsHadoopFiles`
+  - Save this DStream's contents as Hadoop files.
+- `foreachRDD(func)`
+  - Applies a func, func, to each RDD generated from stream
+
+## Spark ML
+
 - Classification: logistic regression, naive Bayes
 - Regression: generalized linear regression, survival regression
 - Decision trees, random forests, & gradient-boosted trees
@@ -2773,284 +1854,36 @@ cachedMsgs.filter(\_.contains("bar")).count
 - Clustering: K-means, Gaussian mixtures (GMMs)
 - Topic modeling: latent Dirichlet allocation (LDA)
 - Frequent item sets, association rules, & sequential pattern mining
-- PySpark is an interface for using Python
-  From [2]
-  4
-  4
-  2
-  30/01/2023
-  Binary Classification Example [3]
-- Binary Classification is task of predicting
-  a binary label
-- Is an email spam or not spam?
-- Should I show this ad to this user or not?
-- Will it rain tomorrow or not?
-- Adult dataset
-- https://archive.ics.uci.edu/ml/datasets/Adult
-- 48842 individuals & their annual income
-- We will use this information to predict if an
-  individual earns <=50K or >50k a year
-  5
-  5
-  Dataset Information
-- Attribute Information:
-  - age: continuous
-  -
-  - workclass: Private,Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay,
-    Never-worked
-    fnlwgt: continuous
-  -
-  - education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc...
-    education-num: continuous
-  - marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouseabsent...
-    occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlerscleaners...
-  -
-  -
-  - relationship: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried
-    race: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black
-  -
-  - sex: Female, Male
-    capital-gain: continuous
-  -
-  -
-  - capital-loss: continuous
-    hours-per-week: continuous
-    native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany...
-- Target/Label: - <=50K, >50K
-  6
-  6
-  3
-  30/01/2023
-  Analyzing Flow
-- Load data
-- Preprocess Data
-- Fit & Evaluate Models
-- Logistic Regression
-- Decision Trees
-- Random Forest
-- Make Classification
-  7
-  7
-  Lab: Running Binary Classification
-  on Zeppelin
-- Get prepared notebook
-- Run & try to understand algorithms
-  8
-  8
-  4
-  30/01/2023
-  References
-- [1]
-  https://blogs.oracle.com/bigdata/difference-aimachine-learning-deep-learning
-- [2] https://www.edureka.co/blog/pysparkmllib-tutorial/
-- [3]
-  https://docs.databricks.com/spark/latest/mllib/
-  binary-classification-mllib-pipelines.html
-  9
-  9
-  5
-  30/01/2023
-  L7: Use Spark ML to Predict Flight Delays
-  1
-  Big Data Processing
-  1/2023
-  Thanh-Chung Dao Ph.D.
-  1
-  Spark ML
-- Spark ML is a machine-learning library
-- Classification: logistic regression, naive Bayes
-- Regression: generalized linear regression, survival regression
-- Decision trees, random forests, & gradient-boosted trees
-- Recommendation: alternating least squares (ALS)
-- Clustering: K-means, Gaussian mixtures (GMMs)
-- Topic modeling: latent Dirichlet allocation (LDA)
-- Frequent item sets, association rules, & sequential pattern mining
-  2
-  2
-  1
-  30/01/2023
-  Classification vs Prediction
-- Classification models predict categorical class
-  labels [2]
-- Binary classification
-- Prediction models predict continuous valued
-  funcs
-- Regression analysis is a statistical methodology that
-  is most often used for numeric prediction
-  3
-  3
-  Predicting arrival delay of
-  commercial flights [1]
-- Problem
-- We want to be able to predict, based on historical data
-- arrival delay of a flight using only information
-  available before flight takes off
-- Dataset
-- http://stat-computing.org/dataexpo/2009/the-data.html
-- data used was published by US Department of
-  Transportation
-- It compromises almost 23 years worth of data
-- Approach
-- Using a regression algorithm
-  4
-  4
-  2
-  30/01/2023
-  Dataset Information
-  Name
-  Year
-  Description
-  1
-  2
-  Month
-  1-12
-  3
-  DayofMonth
-  1-31
-  4
-  DayOfWeek
-  1 (Monday) - 7 (Sunday)
-  5
-  DepTime
-  actual departure time (local, hhmm)
-  6
-  CRSDepTime
-  scheduled departure time (local, hhmm)
-  7
-  ArrTime
-  actual arrival time (local, hhmm)
-  8
-  CRSArrTime
-  scheduled arrival time (local, hhmm)
-  9
-  UniqueCarrier
-  unique carrier code
-  10
-  FlightNum
-  flight number
-  11
-  12
-  TailNum
-  ActualElapsedTime
-  plane tail number
-  in minutes
-  13
-  CRSElapsedTime
-  in minutes
-  14
-  AirTime
-  in minutes
-  15
-  ArrDelay
-  arrival delay, in minutes
-  16
-  DepDelay
-  departure delay, in minutes
-  1987-2008
-  5
-  5
-  Analyzing Flow
-- Load data
-- Preprocess Data
-- Train data & obtain a model
-- Evaluate resulting model
-- Make Predictions
-  6
-  6
-  3
-  30/01/2023
-  Lab: Running Prediction of Flight Delay
-  on Zeppelin
-- Write code using PySpark
-- Get prepared notebook
-- Run & try to understand algorithms
-- original source code (in Scala)
-- https://github.com/pedroduartecosta/SparkPredictFlightDelay
-  7
-  7
-  References
-- [1] https://medium.com/@pedrodc/building-abig-data-machine-learning-spark-applicationfor-flight-delay-prediction-4f9507cdb010
-- [2]
-  https://www.tutorialspoint.com/data_mining/d
-  m_classification_prediction.htm
-  8
-  8
-  4
-  06/02/2023
-  L8: Spark GraphX
-  1
-  IT5427
-  Tích hợp và xử lý data lớn
-  IT5427
-  01/2023
-  Thanh-Chung Dao Ph.D.
-  1
-  GraphX
-  ¨ Apache Spark's API for graphs & graph-parallel
-  computation
-  ¨ GraphX unifies ETL (Extract, Transform & Load)
-  process
-  ¨ Exploratory analysis & iterative graph
-  computation within a single sys
-  2
-  1
-  06/02/2023
-  Use cases
-  ¨ Facebook's friends, LinkedIn's connections
-  ¨ Internet's routers
-  ¨ Relationships between galaxies & stars in
-  astrophysics & Google's Maps
-  ¨ Disaster detection, banking, stock market
-  3
-  RDD on GraphX
-  ¨ GraphX extends Spark RDD with a Resilient
-  Distributed Property Graph
-  ¨ property graph is a directed multigraph which
-  can have multiple edges in parallel
-  ¨ parallel edges allow multiple relationships
-  between same vertices
-  4
-  2
-  06/02/2023
-  Spark GraphX Features
-  ¨ Flexibility
-  ¤ Spark GraphX works with both graphs & computations
-  ¤ GraphX unifies ETL (Extract, Transform & Load),
-  exploratory analysis & iterative graph computation
-  ¨ Speed
-  ¤ fastest specialized graph processing syss
-  ¨ Growing Algorithm Library
-  ¤ Page rank, connected components, label propagation,
-  SVD++, strongly connected components & triangle
-  count
-  5
-  GraphX with Examples
-  ¨ graph here represents Twitter users & whom they follow on Twitter. For e.g. Bob follows
-  Davide & Alice on Twitter
-  ¨ Looking at graph, we can extract information
-  about people (vertices) & relations
-  between them (edges)
-  6
-  3
-  06/02/2023
-  Source code
-  7
-  More source code
-  8
-  4
-  06/02/2023
-  Other example in PySpark
-  9
-  Spark Knowledge Graph
-  ¨ Example: https://github.com/spoddutur/graph-
-  knowledge-browser
-  10
-  5
-  06/02/2023
-  Books:
-  Acknowledgement
-  & References
-  Slides:
-- https://www.edureka.co/blog/sparkgraphx/
-  11
-  6
+
+## Spark GraphX
+
+- Apache Spark's API for graphs & graph-parallel computation
+- GraphX unifies ETL (Extract, Transform & Load) process
+- Exploratory analysis & iterative graph computation within a single sys
+
+### Use cases
+
+- Facebook's friends, LinkedIn's connections
+- Internet's routers
+- Relationships between galaxies & stars in astrophysics & Google's Maps
+- Disaster detection, banking, stock market
+
+### RDD on GraphX
+
+- GraphX extends Spark RDD with a Resilient Distributed Property Graph
+- property graph is a directed multigraph which can have multiple edges in parallel
+- parallel edges allow multiple relationships between same vertices
+
+### Features
+
+- Flexibility
+  - Spark GraphX works with both graphs & computations
+  - GraphX unifies ETL (Extract, Transform & Load), exploratory analysis & iterative graph computation
+- Speed
+  - fastest specialized graph processing syss
+- Growing Algorithm Library
+  - Page rank
+  - connected components
+  - label propagation
+  - SVD++
+  - strongly connected components & triangle count
