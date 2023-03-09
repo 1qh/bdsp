@@ -1423,6 +1423,7 @@ cachedMsgs.filter(\_.contains("bar")).count
    `lines = sc.parallelize(["pandas", "i like pandas"])`
 
 1. Loading data from external storage
+  
    `lines = sc.textFile("/path/to/README.md")`
 
 ### Operations
